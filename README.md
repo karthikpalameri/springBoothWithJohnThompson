@@ -58,4 +58,4 @@ Got a question about your Spring Framework 6 course? [Checkout these FAQs!](http
 * Subscribe to Spring Framework Guru on [YouTube](https://www.youtube.com/channel/UCrXb8NaMPQCQkT8yMP_hSkw)
 * Like Spring Framework Guru on [Facebook](https://www.facebook.com/springframeworkguru/)
 * Follow Spring Framework Guru on [Twitter](https://twitter.com/spring_guru)
-* Connect with John Thompson on [LinkedIn](http://www.linkedin.com/in/springguru)
+* Connect with John Thompson on [LinkedIn](http://www.linkedin.com/in/springguru)# simpleMockMvcTestWithMockito
