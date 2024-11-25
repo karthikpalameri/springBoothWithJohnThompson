@@ -59,4 +59,5 @@ class BeerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testBeer.getId().toString())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.beerName", is(testBeer.getBeerName())));
     }
+    
 }
