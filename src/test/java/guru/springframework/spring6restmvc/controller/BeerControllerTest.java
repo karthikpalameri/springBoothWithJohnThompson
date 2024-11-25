@@ -6,9 +6,6 @@ import guru.springframework.spring6restmvc.services.BeerServiceImpl;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
-//import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.http.MediaType;
 import org.springframework.test.context.bean.override.mockito.MockitoBean;
 import org.springframework.test.web.servlet.MockMvc;
@@ -18,7 +15,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import java.util.UUID;
 
 import static org.hamcrest.core.Is.is;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.BDDMockito.given;
 
@@ -59,5 +55,17 @@ class BeerControllerTest {
                 .andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testBeer.getId().toString())))
                 .andExpect(MockMvcResultMatchers.jsonPath("$.beerName", is(testBeer.getBeerName())));
     }
-    
+
+    @Test
+    void testListBeers() throws Exception {
+        given(beerService.listBeers()).willReturn(beerServiceImpl.listBeers());
+
+        mockMvc
+                .perform(MockMvcRequestBuilders.get("/api/v1/beer")
+                        .accept(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.jsonPath("$.length()", is(3)));
+    }
+
 }
