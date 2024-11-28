@@ -57,23 +57,22 @@ class BeerControllerTest {
         Beer beer = beerServiceImpl.listBeers().get(0);
         Map<String, Object> beerMap = new HashMap<>();
         beerMap.put("beerName", "New Beer Name");
-        mockMvc.perform(MockMvcRequestBuilders.patch("/api/v1/beer/" + beer.getId())
+        mockMvc.perform(MockMvcRequestBuilders.patch(BeerController.BEER_BY_ID_PATH, beer.getId())
                         .accept(MediaType.APPLICATION_JSON)
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(objectMapper.writeValueAsString(beerMap)))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
         verify(beerService).patchBeerById(beerIdArgumentCaptor.capture(),
                 beerArgumentCaptor.capture()); // Verify that the patchBeerById method was called with the correct arguments (UUID and Beer object)
-        assertThat(beer.getId()).isEqualTo(beerIdArgumentCaptor.getValue());
+        assertThat(beer.getId()).isEqualTo(beerIdArgumentCaptor.getValue());//we did not modify the id, so it should be the same
 
-        
     }
 
     @Test
     void testDeleteBeer() throws Exception {
         Beer beer = beerServiceImpl.listBeers().get(0);
         mockMvc.
-                perform(MockMvcRequestBuilders.delete("/api/v1/beer/" + beer.getId())
+                perform(MockMvcRequestBuilders.delete(BeerController.BEER_BY_ID_PATH, beer.getId())
                         .accept(MediaType.APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isNoContent());
         verify(beerService).deleteById(beerIdArgumentCaptor.capture()); // Verify that the deleteById method was called with the correct argument (UUID
@@ -86,7 +85,7 @@ class BeerControllerTest {
     @Test
     void testUpdateBeer() throws Exception {
         Beer beer = beerServiceImpl.listBeers().get(0);
-        mockMvc.perform(MockMvcRequestBuilders.put("/api/v1/beer/" + beer.getId()).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(beer)));
+        mockMvc.perform(MockMvcRequestBuilders.put(BeerController.BEER_BY_ID_PATH, beer.getId()).accept(MediaType.APPLICATION_JSON).contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(beer)));
 
         verify(beerService).updateBeerById(any(UUID.class), any(Beer.class));//verify that the updateBeerById method was called with the correct arguments (beer id and beer object) when the PUT request is made
     }
@@ -99,7 +98,7 @@ class BeerControllerTest {
         System.out.println("beer json = " + objectMapper.writeValueAsString(beer));
 
         given(beerService.saveNewBeer(any(Beer.class))).willReturn(beerServiceImpl.listBeers().get(1));//returning the second element of the list so the id is not null
-        mockMvc.perform(MockMvcRequestBuilders.post("/api/v1/beer").accept(MediaType.APPLICATION_JSON)// Set the Accept header to JSON for the request, indicating that the client expects JSON response
+        mockMvc.perform(MockMvcRequestBuilders.post(BeerController.BEER_PATH).accept(MediaType.APPLICATION_JSON)// Set the Accept header to JSON for the request, indicating that the client expects JSON response
                         .contentType(MediaType.APPLICATION_JSON)// Set the Content-Type header to JSON for the request, indicating that the client is sending JSON data
                         .content(objectMapper.writeValueAsString(beer))) // Convert the Beer object to JSON and set it as the request body
                 .andExpect(MockMvcResultMatchers.status().isCreated()).andExpect(MockMvcResultMatchers.header().exists("Location"));
@@ -114,17 +113,16 @@ class BeerControllerTest {
         given(beerService.getBeerById(any(UUID.class))).willReturn(testBeer); // Mock the BeerService to return the testBeer when getBeerById is called
 
         // Act & Assert: Call the controller and verify the result
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/beer/" + UUID.randomUUID()).accept(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
+        mockMvc.perform(MockMvcRequestBuilders.get(BeerController.BEER_BY_ID_PATH, UUID.randomUUID()).accept(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
 
         // Act & Assert: Call the controller and verify the result
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/beer/" + testBeer.getId()).accept(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testBeer.getId().toString()))).andExpect(MockMvcResultMatchers.jsonPath("$.beerName", is(testBeer.getBeerName())));
+        mockMvc.perform(MockMvcRequestBuilders.get(BeerController.BEER_BY_ID_PATH, testBeer.getId()).accept(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.jsonPath("$.id", is(testBeer.getId().toString()))).andExpect(MockMvcResultMatchers.jsonPath("$.beerName", is(testBeer.getBeerName())));
     }
 
     @Test
     void testListBeers() throws Exception {
         given(beerService.listBeers()).willReturn(beerServiceImpl.listBeers());
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/api/v1/beer").accept(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.jsonPath("$.length()", is(3)));
+        mockMvc.perform(MockMvcRequestBuilders.get(BeerController.BEER_PATH).accept(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.jsonPath("$.length()", is(3)));
     }
-
 }
