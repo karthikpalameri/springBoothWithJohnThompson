@@ -65,7 +65,7 @@ public class CustomerController {
 
     @GetMapping(value = CUSTOMER_BY_ID_PATH)
     public Customer getCustomerById(@PathVariable("customerId") UUID id) {
-        return customerService.getCustomerById(id);
+        return customerService.getCustomerById(id).orElseThrow(NotFoundException::new);
     }
 
 }

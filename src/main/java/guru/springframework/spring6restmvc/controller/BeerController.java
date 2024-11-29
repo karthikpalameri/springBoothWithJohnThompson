@@ -65,13 +65,19 @@ public class BeerController {
     public List<Beer> listBeers() {
         return beerService.listBeers();
     }
+//    // Exception Handling Technique 1 - Exception Handler on controller level, only works for this controllers
+//    @ExceptionHandler(NotFoundException.class)//exception handler for NotFoundException on controller level
+//    public ResponseEntity handleNotFounddException() {
+//        System.out.println("handleNotFounddException on controller level");
+//        return ResponseEntity.notFound().build();
+//    }
 
     @GetMapping(value = BEER_BY_ID_PATH)
     public Beer getBeerById(@PathVariable("beerId") UUID beerId) {
 
         log.debug("Get Beer by Id - in controller");
 
-        return beerService.getBeerById(beerId);
+        return beerService.getBeerById(beerId).orElseThrow(NotFoundException::new);
     }
 
 }

@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
@@ -106,11 +107,22 @@ class BeerControllerTest {
     }
 
     @Test
+    void getBeerByIdNotFound() throws Exception {
+        given(beerService.getBeerById(any(UUID.class))).willReturn(Optional.empty());
+//                .willThrow(NotFoundException.class);
+
+        mockMvc
+                .perform(MockMvcRequestBuilders.get(BeerController.BEER_BY_ID_PATH, UUID.randomUUID()))
+                .andExpect(MockMvcResultMatchers.status().isNotFound())
+                .andExpect(MockMvcResultMatchers.status().reason("Value Not Found"));
+    }
+
+    @Test
     void getBeerById() throws Exception { // Define a test case for the getBeerById method
 
         Beer testBeer = beerServiceImpl.listBeers().get(0); // Retrieve the first beer from the list for testing
 
-        given(beerService.getBeerById(any(UUID.class))).willReturn(testBeer); // Mock the BeerService to return the testBeer when getBeerById is called
+        given(beerService.getBeerById(any(UUID.class))).willReturn(Optional.of(testBeer)); // Mock the BeerService to return the testBeer when getBeerById is called
 
         // Act & Assert: Call the controller and verify the result
         mockMvc.perform(MockMvcRequestBuilders.get(BeerController.BEER_BY_ID_PATH, UUID.randomUUID()).accept(MediaType.APPLICATION_JSON)).andExpect(MockMvcResultMatchers.status().isOk()).andExpect(MockMvcResultMatchers.content().contentType(MediaType.APPLICATION_JSON));
